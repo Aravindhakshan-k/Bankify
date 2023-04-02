@@ -1,16 +1,26 @@
 from django.shortcuts import render
 from django.views.generic import View
 from django.http import JsonResponse
+from django.http import HttpResponse
 import pandas as pd
 
 
 # Create your views here.
+class HomeView(View):
+    def get(self, request, *args, **kwargs):
+        response = 'Everything in life has more than one path. So please try the correct URL as per documentation.'
+        return JsonResponse(response, safe=False)
+
 class GetBankListView(View):
     def get(self, request, *args, **kwargs):
         data = pd.read_csv("bankapp/data/bank_branches.csv")
         limit = kwargs.get('limit')
-        val = data.head(limit)[["bank_name","branch","ifsc"]].to_dict('records')
+        if limit is None:
+            val = data.head(20)[["bank_name","branch","ifsc"]].to_dict('records')
+        else:
+            val = data.head(limit)[["bank_name","branch","ifsc"]].to_dict('records')
         return JsonResponse(val, safe=False)
+
 
         
 class GetBankBranchDetails(View):
